@@ -1,13 +1,13 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
-
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-
+import AntDesign from '@expo/vector-icons/AntDesign';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
@@ -34,11 +34,26 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="search"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Search',
+          tabBarIcon: ({ color }) => <AntDesign name="search1" size={24} color="black" />,
         }}
+      />
+      <Tabs.Screen
+        name="work"
+        options={{
+          title: 'Work',
+          tabBarIcon: ({ color }) => <MaterialIcons name="work" size={24} color="black" />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <AntDesign name="user" size={24} color="black" />,
+        }}
+        
       />
     </Tabs>
   );
