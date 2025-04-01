@@ -5,52 +5,49 @@ import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Header } from '@/components/Header';
 import { useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 
-interface WorkItem {
+interface PaymentItem {
   id: string;
   projectName: string;
   clientName: string;
   clientLogo: string;
-  status: 'in_progress' | 'completed' | 'pending';
-  progress: number;
-  deadline: string;
-  budget: string;
+  amount: string;
+  status: 'completed' | 'pending';
+  date: string;
 }
 
-const mockWorkItems: WorkItem[] = [
+const mockPayments: PaymentItem[] = [
   {
     id: '1',
     projectName: 'E-commerce App Development',
     clientName: 'TechCorp India',
     clientLogo: 'https://randomuser.me/api/portraits/men/1.jpg',
-    status: 'in_progress',
-    progress: 65,
-    deadline: '15 days left',
-    budget: '₹75,000',
+    amount: '₹75,000',
+    status: 'completed',
+    date: 'Mar 15, 2024',
   },
   {
     id: '2',
     projectName: 'UI/UX Design',
     clientName: 'Digital Solutions',
     clientLogo: 'https://randomuser.me/api/portraits/women/1.jpg',
+    amount: '₹50,000',
     status: 'pending',
-    progress: 0,
-    deadline: '30 days left',
-    budget: '₹50,000',
+    date: 'Mar 20, 2024',
   },
   {
     id: '3',
     projectName: 'Content Writing',
     clientName: 'Content Hub',
     clientLogo: 'https://randomuser.me/api/portraits/men/2.jpg',
+    amount: '₹25,000',
     status: 'completed',
-    progress: 100,
-    deadline: 'Completed',
-    budget: '₹25,000',
+    date: 'Mar 10, 2024',
   },
 ];
 
-export default function WorkScreen() {
+export default function RevenueScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = () => {
@@ -65,22 +62,9 @@ export default function WorkScreen() {
     // Handle avatar press
   };
 
-  const getStatusColor = (status: WorkItem['status']) => {
-    switch (status) {
-      case 'in_progress':
-        return '#2ecc71';
-      case 'completed':
-        return '#3498db';
-      case 'pending':
-        return '#f1c40f';
-      default:
-        return '#666';
-    }
-  };
-
-  const renderWorkItem = (item: WorkItem) => (
-    <TouchableOpacity key={item.id} style={styles.workCard}>
-      <View style={styles.workHeader}>
+  const renderPaymentItem = (item: PaymentItem) => (
+    <TouchableOpacity key={item.id} style={styles.paymentCard}>
+      <View style={styles.paymentHeader}>
         <View style={styles.clientInfo}>
           <Image source={{ uri: item.clientLogo }} style={styles.clientLogo} />
           <View>
@@ -88,31 +72,21 @@ export default function WorkScreen() {
             <ThemedText style={styles.clientName}>{item.clientName}</ThemedText>
           </View>
         </View>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
-          <ThemedText style={[styles.statusText, { color: getStatusColor(item.status) }]}>
-            {item.status.replace('_', ' ').toUpperCase()}
+        <View style={[styles.statusBadge, { backgroundColor: item.status === 'completed' ? '#2ecc7120' : '#f1c40f20' }]}>
+          <ThemedText style={[styles.statusText, { color: item.status === 'completed' ? '#2ecc71' : '#f1c40f' }]}>
+            {item.status.toUpperCase()}
           </ThemedText>
         </View>
       </View>
 
-      <View style={styles.progressContainer}>
-        <View style={styles.progressHeader}>
-          <ThemedText style={styles.progressLabel}>Progress</ThemedText>
-          <ThemedText style={styles.progressValue}>{item.progress}%</ThemedText>
+      <View style={styles.paymentDetails}>
+        <View style={styles.amountContainer}>
+          <ThemedText style={styles.amountLabel}>Amount</ThemedText>
+          <ThemedText style={styles.amountValue}>{item.amount}</ThemedText>
         </View>
-        <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: `${item.progress}%` }]} />
-        </View>
-      </View>
-
-      <View style={styles.workDetails}>
-        <View style={styles.detailItem}>
-          <Ionicons name="time-outline" size={16} color="#666" />
-          <ThemedText style={styles.detailText}>{item.deadline}</ThemedText>
-        </View>
-        <View style={styles.detailItem}>
-          <Ionicons name="wallet-outline" size={16} color="#666" />
-          <ThemedText style={styles.detailText}>{item.budget}</ThemedText>
+        <View style={styles.dateContainer}>
+          <ThemedText style={styles.dateLabel}>Date</ThemedText>
+          <ThemedText style={styles.dateValue}>{item.date}</ThemedText>
         </View>
       </View>
     </TouchableOpacity>
@@ -133,8 +107,31 @@ export default function WorkScreen() {
             />
           }
         >
+          {/* Summary Cards */}
+          <View style={styles.summaryContainer}>
+            <LinearGradient
+              colors={['#2ecc71', '#27ae60']}
+              style={styles.summaryCard}
+            >
+              <ThemedText style={styles.summaryLabel}>Total Earnings</ThemedText>
+              <ThemedText style={styles.summaryValue}>₹1,50,000</ThemedText>
+              <ThemedText style={styles.summarySubtext}>This Month</ThemedText>
+            </LinearGradient>
+
+            <LinearGradient
+              colors={['#3498db', '#2980b9']}
+              style={styles.summaryCard}
+            >
+              <ThemedText style={styles.summaryLabel}>Pending Payments</ThemedText>
+              <ThemedText style={styles.summaryValue}>₹50,000</ThemedText>
+              <ThemedText style={styles.summarySubtext}>2 Projects</ThemedText>
+            </LinearGradient>
+          </View>
+
+          {/* Payment List */}
           <View style={styles.content}>
-            {mockWorkItems.map(renderWorkItem)}
+            <ThemedText style={styles.sectionTitle}>Recent Payments</ThemedText>
+            {mockPayments.map(renderPaymentItem)}
           </View>
         </ScrollView>
       </ThemedView>
@@ -153,10 +150,42 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  summaryContainer: {
+    flexDirection: 'row',
+    padding: 16,
+    gap: 12,
+  },
+  summaryCard: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 16,
+  },
+  summaryLabel: {
+    fontSize: 14,
+    color: '#fff',
+    opacity: 0.9,
+    marginBottom: 4,
+  },
+  summaryValue: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  summarySubtext: {
+    fontSize: 12,
+    color: '#fff',
+    opacity: 0.7,
+  },
   content: {
     padding: 16,
   },
-  workCard: {
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+  paymentCard: {
     backgroundColor: '#fff',
     borderRadius: 16,
     padding: 16,
@@ -170,7 +199,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  workHeader: {
+  paymentHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
@@ -205,44 +234,35 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
   },
-  progressContainer: {
-    marginBottom: 16,
-  },
-  progressHeader: {
+  paymentDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    paddingTop: 16,
   },
-  progressLabel: {
-    fontSize: 14,
+  amountContainer: {
+    alignItems: 'flex-start',
+  },
+  amountLabel: {
+    fontSize: 12,
     opacity: 0.7,
+    marginBottom: 4,
   },
-  progressValue: {
-    fontSize: 14,
+  amountValue: {
+    fontSize: 18,
     fontWeight: '600',
   },
-  progressBar: {
-    height: 6,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 3,
-    overflow: 'hidden',
+  dateContainer: {
+    alignItems: 'flex-end',
   },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#2ecc71',
-    borderRadius: 3,
-  },
-  workDetails: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  detailItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  detailText: {
-    fontSize: 14,
-    marginLeft: 4,
+  dateLabel: {
+    fontSize: 12,
     opacity: 0.7,
+    marginBottom: 4,
   },
-});
+  dateValue: {
+    fontSize: 14,
+    opacity: 0.8,
+  },
+}); 
